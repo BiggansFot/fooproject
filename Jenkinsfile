@@ -1,20 +1,36 @@
 pipeline {
-  agent any 
+  agent any
+
+  environment {
+    def myLink = 'https://github.com/BiggansFot/fooproject.git'
+    def myBuild = 'mvn compile'
+    def myTest = 'mvn test'
+    def postAlways = '**/TEST*.xml'
+  }
+  parameters {
+    booleanParam(defaultValue: false, description: "Enable service?", name: 'myBoolean')
+  }
+
   stages {
+    stage('Checkout') {
+      steps {
+        git "${myLink}"
+      }
+    }
     stage('Build') {
       steps {
-        sh "mvn compile"
+        bat "mvn compile"
       }
     }  
     stage('Test') {
       steps {
-        sh "mvn test"
+        bat "mvn test"
       }
-     post {
-      always {
-        junit '**/TEST*.xml'
+      post {
+        always {
+          junit '**/TEST*.xml'
+        }
       }
-     }
+    }
   }
- }
 }
